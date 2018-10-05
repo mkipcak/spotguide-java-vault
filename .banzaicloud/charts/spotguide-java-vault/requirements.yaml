@@ -1,0 +1,4 @@
+dependencies:
+  - name: vault
+    repository: http://kubernetes-charts.banzaicloud.com/branch/master
+    version: 0.5.12

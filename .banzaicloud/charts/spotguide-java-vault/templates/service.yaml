@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "spotguide-java-vault.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "spotguide-java-vault.name" . }}
+    helm.sh/chart: {{ include "spotguide-java-vault.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "spotguide-java-vault.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

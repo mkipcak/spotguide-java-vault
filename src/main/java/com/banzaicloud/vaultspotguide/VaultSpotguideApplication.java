@@ -3,7 +3,7 @@ package com.banzaicloud.vaultspotguide;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.vault.core.VaultTemplate;
+import org.springframework.vault.core.VaultOperations;
 
 import javax.annotation.PostConstruct;
 
@@ -11,11 +11,11 @@ import javax.annotation.PostConstruct;
 public class VaultSpotguideApplication {
 
     @Autowired
-    private VaultTemplate vaultTemplate;
+    private VaultOperations vaultOperations;
 
     @PostConstruct
     private void postConstruct() {
-        vaultTemplate.opsForSys().getMounts().forEach((k, v) -> System.out.println(k + " = " + v.getType() + ": " + v.getDescription()));
+        vaultOperations.opsForSys().getMounts().forEach((k, v) -> System.out.println(k + " = " + v.getType() + ": " + v.getDescription()));
     }
 
     public static void main(String[] args) {

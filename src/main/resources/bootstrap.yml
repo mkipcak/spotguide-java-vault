@@ -1,9 +1,9 @@
-spring:
-  application.name: vault-spotguide
-  cloud.vault:
-    host: localhost
-    port: 8200
-    scheme: http
-    authentication: TOKEN
-    token: c7c5aec6-cfde-b92c-254e-d3a66bfbe748
-    reactive.enabled: false
+#spring:
+#  application.name: vault-spotguide
+#  cloud.vault:
+#    host: localhost
+#    port: 8200
+#    scheme: http
+#    authentication: TOKEN
+#    token: c7c5aec6-cfde-b92c-254e-d3a66bfbe748
+#    reactive.enabled: false
