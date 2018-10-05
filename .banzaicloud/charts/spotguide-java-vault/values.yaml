@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  repository: nginx
-  tag: stable
+  repository: banzaicloud/spotguide-java-vault
+  tag: latest
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -22,30 +22,52 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   path: /
-  hosts:
-    - chart-example.local
+  hosts: []
+  #  - chart-example.local
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
 env:
-  VAULT_URI: http://vault:8200
+  VAULT_AUTHENTICATION: kubernetes
+  VAULT_KUBERNETES_ROLE: application
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
+resources:
+   limits:
+    cpu: 500m
+    memory: 512Mi
+   requests:
+    cpu: 250m
+    memory: 256Mi
 
 nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
+
+vault:
+  vault:
+    externalConfig:
+      policies:
+      - name: allow_secrets
+        rules: path "secret/data/*" {
+            capabilities = ["create", "read", "update"]
+          }
+          path "secret/metadata/*" {
+            capabilities = ["delete", "list"]
+          }
+      auth:
+      - type: kubernetes
+        # Allows creating roles in Vault which can be used later on for the Kubernetes based
+        # authentication.
+        # See https://www.vaultproject.io/docs/auth/kubernetes.html#creating-a-role for
+        # more information.
+        roles:
+        # Allow the application pod in the all namespaces to use the secret kv store
+        - name: application
+          bound_service_account_names: default
+          bound_service_account_namespaces: "*"
+          policies: allow_secrets
+          ttl: 10m

@@ -6,6 +6,7 @@ import org.springframework.vault.support.VaultMount;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,6 +18,11 @@ public class VaultController {
     @RequestMapping("/mounts")
     public Map<String, VaultMount> mounts() {
         return vaultOperations.opsForSys().getMounts();
+    }
+
+    @RequestMapping("/secrets")
+    public List<String> secrets() {
+        return vaultOperations.list("secret/");
     }
 
     @RequestMapping("/")

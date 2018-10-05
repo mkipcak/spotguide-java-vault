@@ -6,13 +6,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import javax.annotation.PostConstruct;
 
 @SpringBootApplication
-public class VaultSpotguideApplication {
+public class VaultApplication {
 
     @PostConstruct
     private void postConstruct() {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(VaultSpotguideApplication.class, args);
+        SpringApplication.run(VaultApplication.class, args);
     }
 }
