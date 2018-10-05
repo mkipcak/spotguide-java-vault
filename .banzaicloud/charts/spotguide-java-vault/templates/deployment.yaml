@@ -19,6 +19,25 @@ spec:
         app.kubernetes.io/name: {{ include "spotguide-java-vault.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      initContainers:
+        - name: {{ .Chart.Name }}-jks
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - keytool
+            - -importcert
+            - -storepass
+            - nandi01
+            - -noprompt
+            - -file
+            - /vault/cacert/ca.crt
+            - -keystore
+            - /vault/jkscacert/ca.jks
+          volumeMounts:
+            - mountPath: /vault/cacert
+              name: vault-cacert
+            - mountPath: /vault/jkscacert
+              name: vault-jks-cacert
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -38,12 +57,25 @@ spec:
           env:
             - name: VAULT_URI
               value: https://{{ .Release.Name }}-vault:8200
+            - name: VAULT_SSL_TRUST_STORE
+              value: file:///vault/cacert/ca.jks
+            - name: VAULT_SSL_TRUST_STORE_PASSWORD
+              value: nandi01
             {{ range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{ end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+          - mountPath: /vault/cacert
+            name: vault-jks-cacert
+      volumes:
+        - name: vault-cacert
+          secret:
+            secretName: {{ .Release.Name }}-vault-tls
+        - name: vault-jks-cacert
+          emptyDir: {}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
