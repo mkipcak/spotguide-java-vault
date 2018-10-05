@@ -22,7 +22,7 @@ public class VaultController {
 
     @RequestMapping("/secrets")
     public List<String> secrets() {
-        return vaultOperations.list("secret/");
+        return vaultOperations.list("secret/metadata/");
     }
 
     @RequestMapping("/")

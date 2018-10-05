@@ -48,6 +48,10 @@ tolerations: []
 affinity: {}
 
 vault:
+  unsealer:
+    image:
+      tag: latest
+      pullPolicy: IfNotPresent
   vault:
     externalConfig:
       policies:
@@ -57,6 +61,9 @@ vault:
           }
           path "secret/metadata/*" {
             capabilities = ["delete", "list"]
+          }
+          path "sys/mounts" {
+            capabilities = ["read", "list"]
           }
       auth:
       - type: kubernetes
