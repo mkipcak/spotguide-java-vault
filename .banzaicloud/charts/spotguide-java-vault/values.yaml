@@ -47,12 +47,23 @@ tolerations: []
 
 affinity: {}
 
+mysql:
+  mysqlUser: vault
+  mysqlPassword: vault
+  mysqlDatabase: vault
+
 vault:
   unsealer:
     image:
       tag: latest
       pullPolicy: IfNotPresent
   vault:
+    config:
+      storage:
+        mysql:
+          address:  spotguide-java-vault-mysql:3306
+          username: vault
+          password: vault
     externalConfig:
       policies:
       - name: allow_secrets

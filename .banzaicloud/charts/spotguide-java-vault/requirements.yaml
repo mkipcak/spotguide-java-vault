@@ -1,4 +1,7 @@
 dependencies:
+  - name: mysql
+    version: 0.10.1
+    repository: "@stable"
   - name: vault
     repository: http://kubernetes-charts.banzaicloud.com/branch/master
     version: 0.5.12
