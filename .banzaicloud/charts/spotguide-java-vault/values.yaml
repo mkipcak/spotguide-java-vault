@@ -53,6 +53,7 @@ mysql:
   mysqlDatabase: vault
 
 vault:
+  replicaCount: 2
   unsealer:
     image:
       tag: latest
@@ -61,13 +62,16 @@ vault:
     config:
       storage:
         mysql:
-          address:  spotguide-java-vault-mysql:3306
+          address: spotguide-java-vault-mysql:3306
           username: vault
           password: vault
+          ha_enabled: "true"
+      api_addr: "https://spotguide-java-vault-vault:8200"
     externalConfig:
       policies:
       - name: allow_secrets
-        rules: path "secret/data/*" {
+        rules:
+          path "secret/data/*" {
             capabilities = ["create", "read", "update"]
           }
           path "secret/metadata/*" {
