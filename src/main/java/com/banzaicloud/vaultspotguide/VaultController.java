@@ -3,8 +3,7 @@ package com.banzaicloud.vaultspotguide;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.vault.core.VaultOperations;
 import org.springframework.vault.support.VaultMount;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -15,14 +14,19 @@ public class VaultController {
     @Autowired
     private VaultOperations vaultOperations;
 
-    @RequestMapping("/mounts")
+    @GetMapping("/mounts")
     public Map<String, VaultMount> mounts() {
         return vaultOperations.opsForSys().getMounts();
     }
 
-    @RequestMapping("/secrets")
+    @GetMapping("/secrets")
     public List<String> secrets() {
         return vaultOperations.list("secret/metadata/");
+    }
+
+    @PostMapping(value = "/secrets")
+    public void createSecret(@RequestBody  Map<String, String> body) {
+        vaultOperations.write("secret/data/", body);
     }
 
     @RequestMapping("/")
