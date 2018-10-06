@@ -11,3 +11,9 @@ helm upgrade --install spotguide-java-vault .banzaicloud/charts/spotguide-java-v
 # Check the application
 kubectl port-forward deployment/spotguide-java-vault 8080
 ```
+
+```bash
+# Delete the Helm release
+helm delete --purge spotguide-java-vault
+kubectl delete secrets bank-vaults
+```
