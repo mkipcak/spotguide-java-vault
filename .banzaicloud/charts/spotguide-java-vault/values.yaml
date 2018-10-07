@@ -1,0 +1,95 @@
+# Default values for spotguide-java-vault.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: banzaicloud/spotguide-java-vault
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  path: /
+  hosts: []
+  #  - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+env:
+  VAULT_AUTHENTICATION: kubernetes
+  VAULT_KUBERNETES_ROLE: application
+
+resources:
+   limits:
+    cpu: 500m
+    memory: 512Mi
+   requests:
+    cpu: 250m
+    memory: 256Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+mysql:
+  mysqlUser: vault
+  mysqlPassword: vault
+  mysqlDatabase: vault
+
+vault:
+  replicaCount: 2
+  unsealer:
+    image:
+      tag: latest
+      pullPolicy: IfNotPresent
+  vault:
+    config:
+      storage:
+        mysql:
+          address: spotguide-java-vault-mysql:3306
+          username: vault
+          password: vault
+          ha_enabled: "true"
+      api_addr: "https://spotguide-java-vault-vault:8200"
+    externalConfig:
+      policies:
+      - name: allow_secrets
+        rules:
+          path "secret/data/*" {
+            capabilities = ["create", "read", "update"]
+          }
+          path "secret/metadata/*" {
+            capabilities = ["delete", "list"]
+          }
+          path "sys/mounts" {
+            capabilities = ["read", "list"]
+          }
+      auth:
+      - type: kubernetes
+        # Allows creating roles in Vault which can be used later on for the Kubernetes based
+        # authentication.
+        # See https://www.vaultproject.io/docs/auth/kubernetes.html#creating-a-role for
+        # more information.
+        roles:
+        # Allow the application pod in the all namespaces to use the secret kv store
+        - name: application
+          bound_service_account_names: default
+          bound_service_account_namespaces: "*"
+          policies: allow_secrets
+          ttl: 10m

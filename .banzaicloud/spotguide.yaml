@@ -1,0 +1,43 @@
+apiVersion: v1
+name: 'Spring Boot with Vault'
+description: 'A spotguide for a Spring application which talks with Vault.'
+tags: ['Java', 'Spring', 'Vault']
+resources:
+  sumCpu: 2
+  sumMem: 4
+  filters: []
+  sameSize: true
+  onDemandPct: 100
+  minNodes: 1
+  maxNodes: 1
+questions:
+- key: secrets.docker.DOCKER_USERNAME
+  type: generic
+  label: 'Docker username'
+  required: true
+  group: Docker Hub
+  description: 'This username will be used to push the image to docker.io'
+- key: secrets.docker.DOCKER_PASSWORD
+  type: generic
+  label: 'Docker password'
+  required: true
+  group: Docker Hub
+  description: 'This password will be used to push the image to docker.io'
+- key: values.application.service.type
+  type: enum
+  label: 'Service type'
+  default: 'ClusterIP'
+  required: true
+  group: Service
+  options:
+  - ClusterIP
+  - LoadBalancer
+  - NodeIP
+- key: values.application.service.port
+  type: number
+  label: 'Service port'
+  default: 80
+  required: true
+  group: Service
+  min: 80
+  max: 65535
