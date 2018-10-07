@@ -27,7 +27,7 @@ spec:
             - keytool
             - -importcert
             - -storepass
-            - nandi01
+            - {{ derivePassword 1 "long" (.Release.Time | toString) "banzai" "cacert" }}
             - -noprompt
             - -file
             - /vault/cacert/ca.crt
@@ -61,7 +61,7 @@ spec:
             - name: VAULT_SSL_TRUST_STORE
               value: file:///vault/cacert/ca.jks
             - name: VAULT_SSL_TRUST_STORE_PASSWORD
-              value: nandi01
+              value: {{ derivePassword 1 "long" (.Release.Time | toString) "banzai" "cacert" }}
             {{ range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
