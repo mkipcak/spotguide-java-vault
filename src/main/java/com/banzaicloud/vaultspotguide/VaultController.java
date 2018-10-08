@@ -3,7 +3,12 @@ package com.banzaicloud.vaultspotguide;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.vault.core.VaultOperations;
 import org.springframework.vault.support.VaultMount;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -25,8 +30,17 @@ public class VaultController {
     public List<Map<String, Object>> secrets() {
         return vaultOperations.list("secret/metadata/")
                 .stream()
-                .map((key) -> vaultOperations.read("secret/data/" + key).getData())
+                .map((key) -> Map.of("id", key, "data", readSecret(key)))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/secrets/{id}")
+    public Map<String, Object> secrets(@PathVariable("key") String key) {
+        return readSecret(key);
+    }
+
+    private Map<String, Object> readSecret(String key) {
+        return vaultOperations.read("secret/data/" + key).getData();
     }
 
     @PostMapping(value = "/secrets")
@@ -41,4 +55,6 @@ public class VaultController {
     public String health() {
         return "OK";
     }
+
+
 }
