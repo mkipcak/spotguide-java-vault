@@ -11,33 +11,10 @@ resources:
   minNodes: 1
   maxNodes: 1
 questions:
-- key: secrets.docker.DOCKER_USERNAME
-  type: generic
-  label: 'Docker username'
-  required: true
+- type: secret
+  dataType: password
+  name: docker-hub
   group: Docker Hub
-  description: 'This username will be used to push the image to docker.io'
-- key: secrets.docker.DOCKER_PASSWORD
-  type: generic
-  label: 'Docker password'
   required: true
-  group: Docker Hub
-  description: 'This password will be used to push the image to docker.io'
-- key: values.application.service.type
-  type: enum
-  label: 'Service type'
-  default: 'ClusterIP'
-  required: true
-  group: Service
-  options:
-  - ClusterIP
-  - LoadBalancer
-  - NodeIP
-- key: values.application.service.port
-  type: number
-  label: 'Service port'
-  default: 80
-  required: true
-  group: Service
-  min: 80
-  max: 65535
+  targets:
+    - name: build_container_secrets.name
