@@ -11,4 +11,4 @@ RUN mvn -f /usr/src/myapp/pom.xml clean package -DskipTests -o
 # The final image should have minimal layers
 FROM openjdk:11-jre-slim
 COPY --from=build /usr/src/myapp/target/app.jar app.jar
-ENTRYPOINT java -jar app.jar
+ENTRYPOINT java -Djava.security.egd=file:/dev/./urandom -jar app.jar
